@@ -1,0 +1,32 @@
+
+// //@version=4
+// strategy("15 mins breakout", overlay=true, default_qty_type = strategy.percent_of_equity, default_qty_value = 3, initial_capital=100000, slippage=2, commission_type=strategy.commission.cash_per_order, commission_value=0, pyramiding=0)
+// strategy.risk.max_drawdown(10, strategy.percent_of_equity)
+
+// inDateRange = (time >= timestamp(syminfo.timezone, 2020, 1, 1, 0, 0)) and (time < timestamp(syminfo.timezone, 2020, 08, 15, 0, 0))
+
+rsi = rsi(close, 14)
+ema = ema(close, 28)
+[macdLine, signalLine, histLine] = macd(close, 12, 26, 9)
+smaVol = sma(volume, 20)
+
+rsiPlot = plot(rsi, title = "rsi", color=color.red)
+signalPlot = plot(signalLine, title = "Signal", color=color.green)
+macdPlot = plot(macdLine, title = "MACD", color=color.blue)
+emaPlot = plot(ema, title="Ema", color=color.yellow)
+
+// Taken from: https://www.tradingview.com/wiki/Sessions_and_Time_Functions
+is_newbar(res) =>
+    t = time(res)
+    change(t) != 0 ? 1 : 0
+ 
+// Detect New Day
+new_day = is_newbar("D")
+ 
+// Get Previous close of the opening bar. 
+last_close = valuewhen(new_day, close, 1)
+
+
+if (inDateRange)
+    strategy.entry(id="long", long=true, when=rsi>60 and macdLine > signalLine)
+    strategy.close
