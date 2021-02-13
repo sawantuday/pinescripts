@@ -1,0 +1,21 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © udayadds
+
+//@version=4
+strategy("RSI MACD", overlay=true, default_qty_type = strategy.percent_of_equity, default_qty_value = 25, initial_capital=100000, slippage=5, commission_type=strategy.commission.cash_per_order, commission_value=20, pyramiding=0)
+strategy.risk.max_drawdown(20, strategy.percent_of_equity)
+
+inDateRange = (time >= timestamp(syminfo.timezone, 2010, 1, 1, 0, 0)) and (time < timestamp(syminfo.timezone, 2019, 12, 31, 0, 0))
+
+rsi = rsi(close, 14)
+ema = ema(close, 28)
+[macdLine, signalLine, histLine] = macd(close, 12, 26, 9)
+
+rsiPlot = plot(rsi, title = "rsi", color=color.red)
+// signalPlot = plot(signalLine, title = "Signal", color=color.green)
+// macdPlot = plot(macdLine, title = "MACD", color=color.blue)
+emaPlot = plot(ema, title="Ema", color=color.yellow)
+
+if (inDateRange)
+    strategy.entry(id="long", long=true, when=rsi>60 and macdLine > signalLine)
+    strategy.close(id="long", when=close<ema and rsi<45)
