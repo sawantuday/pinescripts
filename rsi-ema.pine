@@ -17,13 +17,13 @@ len = input(type=input.integer, defval=7)
 
 plot(series=fastma, title="fast", color=color.orange, linewidth=2)
 plot(series=slowma, title="slow", color=color.black, linewidth=2)
-plot(series=superTrend, title="st", color=color.yellow, linewidth=2)
+plot(series=superTrend, title="st", color=dir<0 ? color.yellow : color.red, linewidth=2)
 // plot(series=rsi, color=color.orange, linewidth=2)
 
 // stopPer = input(5.0, title='Stop Loss %', type=input.float) / 100
 
 if (year>2010)
-    if (rsi > 50 and fastma > slowma and dir > 0)
+    if (rsi > 50 and fastma > slowma and dir < 0)
         strategy.entry('long', long=true)
         
     if (fastma < slowma)
@@ -32,6 +32,9 @@ if (year>2010)
     // if (strategy.position_size > 0)
     //     longStop = strategy.position_avg_price * (1 - stopPer)
     //     strategy.exit('long exit', 'long', stop=longStop, trail_price=strategy.position_avg_price+5)
+    
+    if (year==2021 and month==2 and dayofmonth==11)
+        strategy.close_all()
 
 // This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
 // © udayadds
